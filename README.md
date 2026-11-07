@@ -15,19 +15,24 @@ The project is designed to provide a foundation for developers who want to explo
 Explore the Sasta Mall interface:
 
 ### 🏠 Home Page
-![Sasta Mall Home Page](<img width="1243" height="584" alt="Image" src="https://github.com/user-attachments/assets/9dc5db41-2545-4423-a9c9-45537ea32979" />)
+![Sasta Mall Home Page](![Uploading Home page.png…]()
+)
 
 ### 🛒 Products Page
-![Sasta Mall Products Page](<img width="1260" height="583" alt="Image" src="https://github.com/user-attachments/assets/1a4e4301-ec95-4615-8327-b7964745be5e" />)
+![Sasta Mall Products Page](<img width="1260" height="583" alt="product page" src="https://github.com/user-attachments/assets/dd0c75a9-d57f-4008-84eb-48129947a811" />
+)
 
 ### 👤 Customer Dashboard
-![Customer Dashboard](<img width="1257" height="581" alt="Image" src="https://github.com/user-attachments/assets/feaafbc4-858f-4491-be92-75777091a965" />)
+![Customer Dashboard](<img width="1257" height="581" alt="customer dashboard" src="https://github.com/user-attachments/assets/f8d983e5-7d7e-4b43-b364-2e7ca56bb16b" />
+)
 
 ### ⚙️ Admin Dashboard
-![Admin Dashboard](<img width="1260" height="586" alt="Image" src="https://github.com/user-attachments/assets/8cb331e2-d430-49cc-9b71-f04b1a3eec57" />)
+![Admin Dashboard](<img width="1260" height="586" alt="admin pannel" src="https://github.com/user-attachments/assets/882c7b0d-95df-4b9d-bfc2-77f7de1681e8" />
+)
 
 ### 💬 Customer Support Chat
-![Customer Support Chat](<img width="1244" height="573" alt="Image" src="https://github.com/user-attachments/assets/2d75cfc1-0885-41f1-8e2a-d4be1cd4d61c" />)
+![Customer Support Chat](<img width="1244" height="573" alt="customer support" src="https://github.com/user-attachments/assets/06d730f5-ac8c-44c0-9525-f94e1f37712d" />
+)
 
 ---
 
