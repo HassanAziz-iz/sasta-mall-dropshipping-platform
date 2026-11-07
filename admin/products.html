@@ -1,0 +1,1370 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<title>Products | Sasta-mall Admin</title>
+
+
+
+<style>
+
+*{box-sizing:border-box}
+
+body{margin:0;background:#f4f6fa;color:#202939;font-family:Arial,sans-serif}
+
+header{background:#172033;color:white;padding:18px 26px;display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+
+header h2{margin:0;font-size:22px}
+
+header a{color:white;text-decoration:none}
+
+main{max-width:1100px;margin:28px auto;padding:0 18px}
+
+.topline{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:20px}
+
+.topline h1{margin:0 0 6px;font-size:25px}
+
+.muted{color:#667085;font-size:13px;line-height:1.6}
+
+.panel{background:white;border:1px solid #e7eaf0;border-radius:13px;padding:24px;margin-bottom:22px;box-shadow:0 3px 12px #14233c08}
+
+.panel h2{font-size:18px;margin:0 0 20px}
+
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:17px}
+
+.field{display:flex;flex-direction:column;gap:7px}
+
+.field.full{grid-column:1/-1}
+
+label{font-size:13px;font-weight:700}
+
+input,select,textarea{width:100%;padding:12px;border:1px solid #d7dce5;border-radius:8px;background:white;font:inherit;font-size:14px}
+
+textarea{min-height:110px;resize:vertical}
+
+small{color:#667085;font-size:12px;line-height:1.5}
+
+button,.btn{border:0;border-radius:8px;padding:11px 14px;background:#2563eb;color:white;font-weight:700;font-size:13px;cursor:pointer;text-decoration:none;display:inline-block}
+
+button:disabled{opacity:.6;cursor:wait}
+
+.btn-secondary{background:#eaf0fb;color:#244b91}
+
+.btn-edit{background:#2563eb;color:white}
+
+.btn-status{background:#eaf0fb;color:#244b91}
+
+.btn-delete{background:#fee4e2;color:#b42318}
+
+.actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:20px}
+
+.product-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+
+\#message{margin-top:15px;font-size:14px;white-space:pre-wrap}
+
+.preview{display:flex;gap:10px;flex-wrap:wrap;margin-top:10px}
+
+.preview img,.preview video{width:100px;height:90px;object-fit:cover;border:1px solid #ddd;border-radius:8px}
+
+.product-list{display:grid;gap:12px}
+.product-tabs{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:18px 0 20px;padding:5px;background:#f4f6fa;border:1px solid #e7eaf0;border-radius:12px}
+.product-tab{display:flex;justify-content:center;align-items:center;gap:10px;min-height:48px;background:transparent;color:#475467;border:2px solid transparent;border-radius:9px;font-size:14px}
+.product-tab:hover{background:#eaf0fb}
+.product-tab.active-tab{background:#fff;color:#175cd3;border-color:#84adff;box-shadow:0 2px 7px #14233c0d}
+.product-tab.inactive-tab.active-tab{color:#b42318;border-color:#fda29b}
+.tab-count{display:inline-flex;align-items:center;justify-content:center;min-width:25px;height:24px;padding:0 7px;border-radius:20px;background:#eaf0fb;color:#244b91;font-size:12px}
+.product-tab.inactive-tab .tab-count{background:#fee4e2;color:#b42318}
+
+.product{display:flex;align-items:center;gap:14px;border:1px solid #e7eaf0;padding:14px;border-radius:10px;min-width:0;background:white}
+
+.product.inactive{background:#fafafa;border-color:#e4e7ec}
+
+.thumb{width:70px;height:70px;object-fit:cover;border-radius:8px;background:#f0f2f6;flex-shrink:0}
+
+.product-info{min-width:0;flex:1}
+
+.product-info strong{display:block;overflow-wrap:anywhere;margin-bottom:5px}
+
+.product-info small{display:block;margin-top:4px}
+
+.status{font-size:12px;padding:5px 8px;background:#e6f7ec;color:#17683a;border-radius:20px;white-space:nowrap}
+
+.status.inactive-status{background:#fee4e2;color:#b42318}
+
+.editing-note{display:none;margin-bottom:15px;padding:12px;background:#fff7d6;border-radius:8px;color:#854d0e;font-size:13px}
+
+\#cancelEditBtn{display:none}
+
+@media(max-width:650px){
+
+ .grid{grid-template-columns:1fr}
+
+ .field.full{grid-column:auto}
+
+ .panel{padding:17px}
+
+ .product{align-items:flex-start;flex-wrap:wrap}
+
+ .product-info{flex:1;min-width:150px}
+
+ .status{margin-left:auto}
+
+ .product-actions{width:100%}
+
+ .product-actions button{flex:1}
+ .product-tabs{gap:8px;padding:4px}
+ .product-tab{font-size:12px;padding:10px 6px;gap:6px}
+}
+
+
+</style>
+
+</head>
+
+
+
+<body>
+
+<header>
+
+    <h2>Sasta-mall <span style="font-size:13px;color:#b9c7dc">/ Admin</span></h2>
+
+    <nav style="display:flex;gap:16px;flex-wrap:wrap">
+
+        <a href="/admin/index.html">Dashboard</a>
+
+        <a href="/products.html">View Store ↗</a>
+        <a href="/admin/customers.html">Customers &amp; Orders</a>
+
+    </nav>
+
+</header>
+
+
+
+<main>
+
+    <div class="topline">
+
+        <div>
+
+            <h1>Product Management</h1>
+
+            <div class="muted">Add, edit, activate, deactivate and safely delete products.</div>
+
+        </div>
+
+        <button type="button" class="btn-secondary" id="refreshBtn">Refresh list</button>
+
+    </div>
+
+
+
+    <section class="panel" id="formPanel">
+
+        <h2 id="formTitle">Add New Product</h2>
+
+
+
+        <div id="editingNote" class="editing-note">
+            You are editing an existing product. New uploaded media will be added to its existing media.
+        </div>
+
+        <div id="existingMediaSection" style="display:none;margin:15px 0;padding:15px;border:1px solid #e7eaf0;border-radius:10px">
+            <h3 style="margin:0 0 12px;font-size:15px">Existing Product Media</h3>
+            <div>
+                <strong style="font-size:13px">Images</strong>
+                <div id="existingImages" class="preview"></div>
+            </div>
+            <div style="margin-top:12px">
+                <strong style="font-size:13px">Videos</strong>
+                <div id="existingVideos" class="preview"></div>
+            </div>
+            <p class="muted" style="margin-bottom:0">
+                Existing media stays attached unless you delete it here.
+            </p>
+        </div>
+
+        <form id="productForm">
+
+            <div class="grid">
+
+                <div class="field full">
+
+                    <label for="name">Product title *</label>
+
+                    <input id="name" name="name" maxlength="200" required placeholder="e.g. Wireless Bluetooth Handsfree">
+
+                </div>
+
+
+
+                <div class="field">
+
+                    <label for="category_id">Category *</label>
+
+                    <select id="category_id" name="category_id" required>
+
+                        <option value="">Loading categories...</option>
+
+                    </select>
+
+                    <small>Categories are managed in the admin category section.</small>
+
+                </div>
+
+
+
+                <div class="field">
+
+                    <label for="price">Price (PKR) *</label>
+
+                    <input id="price" name="price" type="number" min="0" step="1" required placeholder="1499">
+
+                </div>
+
+
+
+                <div class="field">
+
+                    <label for="stock">Stock quantity *</label>
+
+                    <input id="stock" name="stock" type="number" min="0" step="1" value="0" required>
+
+                </div>
+
+
+
+                <div class="field">
+
+                    <label for="images">Product images</label>
+
+                    <input id="images" name="images" type="file" accept="image/jpeg,image/png,image/webp,image/gif" multiple>
+
+                    <small>Up to 10 new images. Each file can be up to 20 MB.</small>
+
+                    <div id="imagePreview" class="preview"></div>
+
+                </div>
+
+
+
+                <div class="field">
+
+                    <label for="video">Product video (optional)</label>
+
+                    <input id="video" name="video" type="file" accept="video/mp4,video/webm,video/quicktime">
+
+                    <small>One MP4, WEBM or MOV video, up to 20 MB.</small>
+
+                    <div id="videoPreview" class="preview"></div>
+
+                </div>
+
+
+
+                <div class="field full">
+
+                    <label for="description">Product description *</label>
+
+                    <textarea id="description" name="description" maxlength="10000" required placeholder="Describe the product, its features and benefits..."></textarea>
+
+                </div>
+
+
+
+                <div class="field full">
+
+                    <label for="specifications">Specifications / extra details</label>
+
+                    <textarea id="specifications" name="specifications" maxlength="10000" placeholder="e.g. Colour: Black&#10;Battery: 30 hours&#10;Warranty: 6 months"></textarea>
+
+                </div>
+
+            </div>
+
+
+
+            <div class="actions">
+
+                <button type="submit" id="saveBtn">Save Product</button>
+
+                <button type="reset" class="btn-secondary" id="clearBtn">Clear form</button>
+
+                <button type="button" class="btn-secondary" id="cancelEditBtn">Cancel editing</button>
+
+            </div>
+
+
+
+            <div id="message" role="status" aria-live="polite"></div>
+
+        </form>
+
+    </section>
+
+
+
+    <section class="panel" id="productsPanel">
+
+        <h2>Product Lists</h2>
+
+        <p class="muted">Choose a section below. Products automatically move to the matching list when their status changes.</p>
+
+        <div class="product-tabs" role="tablist" aria-label="Product status filters">
+            <button type="button" class="product-tab active-tab" id="activeTab" role="tab" aria-selected="true" aria-controls="productList" data-status="active">Active Products <span id="activeCount" class="tab-count">0</span></button>
+            <button type="button" class="product-tab" id="inactiveTab" role="tab" aria-selected="false" aria-controls="productList" data-status="inactive">Inactive Products <span id="inactiveCount" class="tab-count">0</span></button>
+        </div>
+
+        <div id="productList" class="product-list" aria-live="polite">
+            <p class="muted">Loading products...</p>
+        </div>
+
+    </section>
+
+</main>
+
+
+
+<script>
+
+const form = document.getElementById("productForm");
+
+const message = document.getElementById("message");
+
+const saveBtn = document.getElementById("saveBtn");
+
+const productList = document.getElementById("productList");
+
+const formTitle = document.getElementById("formTitle");
+
+const editingNote = document.getElementById("editingNote");
+
+const cancelEditBtn = document.getElementById("cancelEditBtn");
+
+
+
+let editingProductId = null;
+
+let busy = false;
+
+
+
+async function readResponse(response) {
+
+    const text = await response.text();
+
+
+
+    let result;
+
+    try {
+
+        result = text ? JSON.parse(text) : {};
+
+    } catch {
+
+        throw new Error("Server returned an unexpected response. Check the server terminal.");
+
+    }
+
+
+
+    if (!response.ok) {
+
+        throw new Error(result.message || result.error || `Request failed (${response.status}).`);
+
+    }
+
+
+
+    return result;
+
+}
+
+
+
+async function checkAdmin() {
+
+    const response = await fetch("/api/admin/auth/me", {
+
+        credentials: "same-origin"
+
+    });
+
+
+
+    const result = await readResponse(response);
+
+
+
+    if (!result.loggedIn) {
+
+        window.location.replace("/admin/login.html");
+
+        return false;
+
+    }
+
+
+
+    return true;
+
+}
+
+
+
+async function loadCategories() {
+
+    const response = await fetch("/api/admin/products/categories", {
+
+        credentials: "same-origin"
+
+    });
+
+
+
+    const categories = await readResponse(response);
+
+    const select = document.getElementById("category_id");
+
+
+
+    select.replaceChildren(new Option("Choose a category", ""));
+
+
+
+    categories.forEach(category => {
+
+        select.add(new Option(category.name, category.id));
+
+    });
+
+
+
+    if (categories.length === 0) {
+
+        select.replaceChildren(new Option("Create a category first", ""));
+
+    }
+
+}
+
+
+
+function showFilePreview(input, container, isVideo) {
+
+    container.replaceChildren();
+
+
+
+    Array.from(input.files || []).forEach(file => {
+
+        const url = URL.createObjectURL(file);
+
+        const media = document.createElement(isVideo ? "video" : "img");
+
+        media.src = url;
+
+
+
+        if (isVideo) {
+
+            media.controls = true;
+
+            media.muted = true;
+
+        } else {
+
+            media.alt = file.name;
+
+        }
+
+
+
+        media.title = file.name;
+
+        container.appendChild(media);
+
+    });
+
+}
+
+
+
+document.getElementById("images").addEventListener("change", event => {
+
+    const files = Array.from(event.target.files || []);
+
+
+
+    if (files.length > 10) {
+
+        alert("Please select no more than 10 images.");
+
+        event.target.value = "";
+
+    }
+
+
+
+    showFilePreview(event.target, document.getElementById("imagePreview"), false);
+
+});
+
+
+
+document.getElementById("video").addEventListener("change", event => {
+
+    showFilePreview(event.target, document.getElementById("videoPreview"), true);
+
+});
+
+
+
+function setMessage(text, type = "info") {
+
+    const colors = {
+
+        success: "#17683a",
+
+        error: "#b42318",
+
+        info: "#667085"
+
+    };
+
+
+
+    message.style.color = colors[type] || colors.info;
+
+    message.textContent = text;
+
+}
+
+
+
+function resetEditor() {
+
+    editingProductId = null;
+
+    form.reset();
+
+    document.getElementById("existingMediaSection").style.display = "none";
+
+    document.getElementById("existingImages").replaceChildren();
+
+    document.getElementById("existingVideos").replaceChildren();
+
+    formTitle.textContent = "Add New Product";
+
+    saveBtn.textContent = "Save Product";
+
+    editingNote.style.display = "none";
+
+    cancelEditBtn.style.display = "none";
+
+
+
+    document.getElementById("imagePreview").replaceChildren();
+
+    document.getElementById("videoPreview").replaceChildren();
+
+
+
+    setMessage("");
+
+}
+
+
+
+form.addEventListener("reset", () => {
+
+    setTimeout(() => {
+
+        document.getElementById("imagePreview").replaceChildren();
+
+        document.getElementById("videoPreview").replaceChildren();
+
+
+
+        if (editingProductId === null) {
+
+            setMessage("");
+
+        }
+
+    }, 0);
+
+});
+
+
+
+document.getElementById("clearBtn").addEventListener("click", () => {
+
+    if (editingProductId !== null) {
+
+        resetEditor();
+
+    }
+
+});
+
+
+
+cancelEditBtn.addEventListener("click", resetEditor);
+
+
+
+form.addEventListener("submit", async event => {
+
+    event.preventDefault();
+
+
+
+    if (busy) return;
+
+
+
+    busy = true;
+
+    saveBtn.disabled = true;
+
+    cancelEditBtn.disabled = true;
+
+
+
+    const wasEditing = editingProductId !== null;
+
+    const productId = editingProductId;
+
+
+
+    saveBtn.textContent = wasEditing ? "Updating..." : "Saving...";
+
+    setMessage("");
+
+
+
+    try {
+
+        const data = new FormData(form);
+
+        const url = wasEditing
+
+            ? `/api/admin/products/${encodeURIComponent(productId)}`
+
+            : "/api/admin/products";
+
+
+
+        const response = await fetch(url, {
+
+            method: wasEditing ? "PUT" : "POST",
+
+            credentials: "same-origin",
+
+            body: data
+
+        });
+
+
+
+        const result = await readResponse(response);
+
+
+
+        if (result.success === false) {
+
+            throw new Error(result.message || "Could not save product.");
+
+        }
+
+
+
+        resetEditor();
+
+        setMessage(
+
+            result.message || (wasEditing
+
+                ? "Product updated successfully!"
+
+                : "Product saved successfully!"),
+
+            "success"
+
+        );
+
+
+
+        await loadProducts();
+
+
+
+    } catch (error) {
+
+        setMessage(error.message, "error");
+
+    } finally {
+
+        busy = false;
+
+        saveBtn.disabled = false;
+
+        cancelEditBtn.disabled = false;
+
+        saveBtn.textContent = editingProductId !== null
+
+            ? "Update Product"
+
+            : "Save Product";
+
+    }
+
+});
+
+
+
+function createExistingMediaCard(product, item) {
+    const card = document.createElement("div");
+    card.style.cssText =
+        "display:flex;flex-direction:column;gap:8px;" +
+        "width:120px;align-items:flex-start;";
+
+    const media = document.createElement(
+        item.media_type === "video" ? "video" : "img"
+    );
+
+    media.src = item.file_path;
+    media.style.cssText =
+        "width:120px;height:100px;object-fit:cover;" +
+        "border:1px solid #ddd;border-radius:8px;";
+
+    if (item.media_type === "video") {
+        media.controls = true;
+        media.preload = "metadata";
+    } else {
+        media.alt = product.name + " existing image";
+        media.onerror = () => {
+            media.alt = "Image could not be loaded";
+        };
+    }
+
+    const deleteBtn = document.createElement("button");
+    deleteBtn.type = "button";
+    deleteBtn.className = "btn-delete";
+    deleteBtn.textContent = "Delete";
+
+    deleteBtn.addEventListener("click", () => {
+        deleteExistingMedia(product, item, card, deleteBtn);
+    });
+
+    card.append(media, deleteBtn);
+    return card;
+}
+
+async function deleteExistingMedia(product, item, card, button) {
+    if (busy) return;
+
+    const kind = item.media_type === "video" ? "video" : "image";
+
+    if (!window.confirm(`Delete this ${kind} from "${product.name}"?`)) {
+        return;
+    }
+
+    busy = true;
+    button.disabled = true;
+    button.textContent = "Deleting...";
+
+    try {
+        const response = await fetch(
+            `/api/admin/products/${encodeURIComponent(product.id)}/media/${encodeURIComponent(item.id)}`,
+            {
+                method: "DELETE",
+                credentials: "same-origin"
+            }
+        );
+
+        const result = await readResponse(response);
+
+        if (result.success === false) {
+            throw new Error(result.message || "Could not delete media.");
+        }
+
+        card.remove();
+
+        product.media = (product.media || []).filter(
+            mediaItem => String(mediaItem.id) !== String(item.id)
+        );
+
+        const images = document.getElementById("existingImages");
+        const videos = document.getElementById("existingVideos");
+
+        images.style.display = images.children.length ? "flex" : "none";
+        videos.style.display = videos.children.length ? "flex" : "none";
+
+        setMessage(result.message || "Media deleted successfully.", "success");
+
+        await loadProducts();
+    } catch (error) {
+        setMessage(error.message, "error");
+        button.disabled = false;
+        button.textContent = "Delete";
+    } finally {
+        busy = false;
+    }
+}
+
+function startEditing(product) {
+    editingProductId = product.id;
+
+    const existingMediaSection = document.getElementById("existingMediaSection");
+    const existingImages = document.getElementById("existingImages");
+    const existingVideos = document.getElementById("existingVideos");
+
+    existingImages.replaceChildren();
+    existingVideos.replaceChildren();
+
+    const mediaItems = Array.isArray(product.media) ? product.media : [];
+
+    mediaItems.forEach(item => {
+        if (!item.file_path) return;
+
+        const card = createExistingMediaCard(product, item);
+
+        if (item.media_type === "image") {
+            existingImages.appendChild(card);
+        } else if (item.media_type === "video") {
+            existingVideos.appendChild(card);
+        }
+    });
+
+    existingImages.style.display = existingImages.children.length ? "flex" : "none";
+    existingVideos.style.display = existingVideos.children.length ? "flex" : "none";
+    existingMediaSection.style.display = "block";
+
+    document.getElementById("name").value = product.name || "";
+
+    document.getElementById("category_id").value = String(product.category_id ?? "");
+
+    document.getElementById("price").value = product.price ?? "";
+
+    document.getElementById("stock").value = product.stock ?? 0;
+
+    document.getElementById("description").value = product.description || "";
+
+    document.getElementById("specifications").value = product.specifications || "";
+
+
+
+    // File inputs cannot be pre-filled by the browser.
+
+    document.getElementById("images").value = "";
+
+    document.getElementById("video").value = "";
+
+    document.getElementById("imagePreview").replaceChildren();
+
+    document.getElementById("videoPreview").replaceChildren();
+
+
+
+    formTitle.textContent = "Edit Product";
+
+    saveBtn.textContent = "Update Product";
+
+    editingNote.style.display = "block";
+
+    cancelEditBtn.style.display = "inline-block";
+
+
+
+    setMessage(`Editing: ${product.name}. Leave media fields empty to keep existing media.`, "info");
+
+
+
+    document.getElementById("formPanel").scrollIntoView({
+
+        behavior: "smooth",
+
+        block: "start"
+
+    });
+
+
+
+    document.getElementById("name").focus();
+
+}
+
+
+
+async function changeProductStatus(product) {
+
+    if (busy) return;
+
+
+
+    const currentlyActive = Number(product.active) === 1;
+
+    const nextActive = currentlyActive ? 0 : 1;
+
+    const action = nextActive ? "activate" : "deactivate";
+
+
+
+    const confirmed = window.confirm(
+
+        `Are you sure you want to ${action} "${product.name}"?` +
+
+        (nextActive
+
+            ? "\n\nThe product can appear on the public storefront again."
+
+            : "\n\nThe product will be hidden from the public storefront.")
+
+    );
+
+
+
+    if (!confirmed) return;
+
+
+
+    busy = true;
+
+
+
+    try {
+
+        const response = await fetch(
+
+            `/api/admin/products/${encodeURIComponent(product.id)}/status`,
+
+            {
+
+                method: "PATCH",
+
+                credentials: "same-origin",
+
+                headers: {
+
+                    "Content-Type": "application/json"
+
+                },
+
+                body: JSON.stringify({ active: nextActive })
+
+            }
+
+        );
+
+
+
+        const result = await readResponse(response);
+
+
+
+        if (result.success === false) {
+
+            throw new Error(result.message || "Could not change product status.");
+
+        }
+
+
+
+        setMessage(
+
+            result.message || `Product "${product.name}" ${nextActive ? "activated" : "deactivated"} successfully.`,
+
+            "success"
+
+        );
+
+
+
+        await loadProducts();
+
+
+
+    } catch (error) {
+
+        setMessage(error.message, "error");
+
+    } finally {
+
+        busy = false;
+
+    }
+
+}
+
+
+
+async function deleteProduct(product) {
+
+    if (busy) return;
+
+
+
+    const confirmed = window.confirm(
+
+        `Delete "${product.name}"?\n\n` +
+
+        "If this product has existing order items, the server should deactivate it instead of deleting it.\n\n" +
+
+        "Continue?"
+
+    );
+
+
+
+    if (!confirmed) return;
+
+
+
+    busy = true;
+
+
+
+    try {
+
+        const response = await fetch(
+
+            `/api/admin/products/${encodeURIComponent(product.id)}`,
+
+            {
+
+                method: "DELETE",
+
+                credentials: "same-origin"
+
+            }
+
+        );
+
+
+
+        const result = await readResponse(response);
+
+
+
+        if (result.success === false) {
+
+            throw new Error(result.message || "Could not delete product.");
+
+        }
+
+
+
+        if (editingProductId !== null &&
+
+            String(editingProductId) === String(product.id)) {
+
+            resetEditor();
+
+        }
+
+
+
+        setMessage(
+
+            result.message || `Delete request for "${product.name}" completed.`,
+
+            "success"
+
+        );
+
+
+
+        await loadProducts();
+
+
+
+    } catch (error) {
+
+        setMessage(error.message, "error");
+
+    } finally {
+
+        busy = false;
+
+    }
+
+}
+
+
+
+function createProductRow(product) {
+
+    const row = document.createElement("article");
+
+    const active = Number(product.active) === 1;
+
+
+
+    row.className = active ? "product" : "product inactive";
+
+
+
+    const thumb = document.createElement("img");
+
+    thumb.className = "thumb";
+
+    thumb.alt = product.name || "Product image";
+
+
+
+    const image = product.media?.find(item => item.media_type === "image");
+
+
+
+    if (image?.file_path) {
+
+        thumb.src = image.file_path;
+
+    } else {
+
+        thumb.style.visibility = "hidden";
+
+    }
+
+
+
+    thumb.onerror = () => {
+
+        thumb.style.visibility = "hidden";
+
+    };
+
+
+
+    const info = document.createElement("div");
+
+    info.className = "product-info";
+
+
+
+    const title = document.createElement("strong");
+
+    title.textContent = product.name || "Unnamed product";
+
+
+
+    const details = document.createElement("small");
+
+    details.textContent =
+
+        `${product.category_name || "No category"} · Rs. ${product.price} · Stock: ${product.stock}`;
+
+
+
+    const mediaInfo = document.createElement("small");
+
+    const imageCount = product.media?.filter(item => item.media_type === "image").length || 0;
+
+    const hasVideo = product.media?.some(item => item.media_type === "video");
+
+
+
+    mediaInfo.textContent =
+
+        `${imageCount} image(s)${hasVideo ? " · Video attached" : ""}`;
+
+
+
+    info.append(title, details, mediaInfo);
+
+
+
+    const status = document.createElement("span");
+
+    status.className = active ? "status" : "status inactive-status";
+
+    status.textContent = active ? "Active" : "Inactive";
+
+
+
+    const actions = document.createElement("div");
+
+    actions.className = "product-actions";
+
+
+
+    const editBtn = document.createElement("button");
+
+    editBtn.type = "button";
+
+    editBtn.className = "btn-edit";
+
+    editBtn.textContent = "Edit";
+
+    editBtn.addEventListener("click", () => startEditing(product));
+
+
+
+    const statusBtn = document.createElement("button");
+
+    statusBtn.type = "button";
+
+    statusBtn.className = "btn-status";
+
+    statusBtn.textContent = active ? "Deactivate" : "Activate";
+
+    statusBtn.addEventListener("click", () => changeProductStatus(product));
+
+
+
+    const deleteBtn = document.createElement("button");
+
+    deleteBtn.type = "button";
+
+    deleteBtn.className = "btn-delete";
+
+    deleteBtn.textContent = "Delete";
+
+    deleteBtn.addEventListener("click", () => deleteProduct(product));
+
+
+
+    actions.append(editBtn, statusBtn, deleteBtn);
+
+    info.appendChild(actions);
+
+
+
+    row.append(thumb, info, status);
+
+
+
+    return row;
+
+}
+
+
+
+function renderProductList() {
+    productList.replaceChildren();
+
+    const visibleProducts = allProducts.filter(product =>
+        (Number(product.active) === 1 ? "active" : "inactive") === activeProductFilter
+    );
+
+    document.getElementById("activeCount").textContent = allProducts.filter(
+        product => Number(product.active) === 1
+    ).length;
+
+    document.getElementById("inactiveCount").textContent = allProducts.filter(
+        product => Number(product.active) !== 1
+    ).length;
+
+    if (visibleProducts.length === 0) {
+        const empty = document.createElement("p");
+        empty.className = "muted";
+        empty.textContent = activeProductFilter === "active"
+            ? "No active products. Add a product above or activate one from Inactive Products."
+            : "No inactive products. Deactivated products will appear here.";
+        productList.appendChild(empty);
+        return;
+    }
+
+    visibleProducts.forEach(product => {
+        productList.appendChild(createProductRow(product));
+    });
+}
+
+async function loadProducts() {
+    productList.replaceChildren();
+
+    const loading = document.createElement("p");
+    loading.className = "muted";
+    loading.textContent = "Loading products...";
+    productList.appendChild(loading);
+
+    try {
+        const response = await fetch("/api/admin/products", {
+            credentials: "same-origin"
+        });
+
+        const products = await readResponse(response);
+
+        if (!Array.isArray(products)) {
+            throw new Error("Unexpected products response from server.");
+        }
+
+        allProducts = products;
+        renderProductList();
+
+    } catch (error) {
+        productList.replaceChildren();
+
+        const errorText = document.createElement("p");
+        errorText.className = "muted";
+        errorText.textContent = error.message;
+        productList.appendChild(errorText);
+    }
+}
+
+function setProductFilter(status) {
+    activeProductFilter = status;
+
+    const activeTab = document.getElementById("activeTab");
+    const inactiveTab = document.getElementById("inactiveTab");
+
+    activeTab.classList.toggle("active-tab", status === "active");
+    inactiveTab.classList.toggle("active-tab", status === "inactive");
+    inactiveTab.classList.toggle("inactive-tab", true);
+
+    activeTab.setAttribute("aria-selected", String(status === "active"));
+    inactiveTab.setAttribute("aria-selected", String(status === "inactive"));
+
+    renderProductList();
+}
+
+
+
+async function startPage() {
+
+    try {
+
+        if (!await checkAdmin()) return;
+
+
+
+        await loadCategories();
+
+        await loadProducts();
+
+
+
+    } catch (error) {
+
+        setMessage(error.message, "error");
+
+    }
+
+}
+
+
+
+document.getElementById("activeTab").addEventListener("click", () => setProductFilter("active"));
+document.getElementById("inactiveTab").addEventListener("click", () => setProductFilter("inactive"));
+
+document.getElementById("refreshBtn").addEventListener("click", loadProducts);
+
+
+
+startPage();
+
+</script>
+
+</body>
+
+</html>

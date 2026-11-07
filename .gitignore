@@ -1,0 +1,28 @@
+# Dependencies
+node_modules/
+
+# Local environment and secrets
+.env
+.env.*
+!.env.example
+
+# Runtime database and SQLite sidecar files
+database/*.db
+database/*.db-*
+database/*.sqlite
+database/*.sqlite-*
+
+# Customer payment receipts and private support files
+public/uploads/receipts/
+private-support-uploads/
+
+# Logs and operating-system/editor files
+*.log
+npm-debug.log*
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# Test/coverage output
+coverage/

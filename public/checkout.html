@@ -1,0 +1,582 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Checkout - Sasta-mall</title>
+    <link rel="stylesheet" href="/css/style.css">
+
+    <style>
+        .checkout-card {
+            width: calc(100% - 28px);
+            max-width: 700px;
+            margin: 40px auto;
+            padding: 32px;
+            background: #fff;
+            border: 1px solid #e5e7eb;
+            border-radius: 16px;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.06);
+            box-sizing: border-box;
+        }
+
+        .checkout-card h1 {
+            margin: 0 0 10px;
+            color: #222;
+            font-size: 30px;
+        }
+
+        .checkout-intro {
+            margin: 0 0 26px;
+            color: #6b7280;
+            line-height: 1.6;
+        }
+
+        .checkout-field {
+            margin-bottom: 18px;
+        }
+
+        .checkout-field label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .checkout-field input,
+        .checkout-field select,
+        .checkout-field textarea {
+            display: block;
+            width: 100%;
+            min-height: 46px;
+            padding: 12px;
+            border: 1px solid #d1d5db;
+            border-radius: 8px;
+            background: #fff;
+            color: #222;
+            font: inherit;
+            box-sizing: border-box;
+        }
+
+        .checkout-field textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+
+        .checkout-field input:focus,
+        .checkout-field select:focus,
+        .checkout-field textarea:focus {
+            outline: 2px solid rgba(230, 91, 37, 0.2);
+            border-color: #e65b25;
+        }
+
+        .field-help {
+            display: block;
+            margin-top: 7px;
+            color: #6b7280;
+            font-size: 12px;
+        }
+
+        #orderSummary {
+            margin: 24px 0;
+            padding: 20px;
+            border: 1px solid #e5e7eb;
+            border-radius: 10px;
+            background: #f8fafc;
+            overflow-wrap: anywhere;
+        }
+
+        .summary-row {
+            display: flex;
+            justify-content: space-between;
+            gap: 16px;
+            padding: 9px 0;
+        }
+
+        .summary-total {
+            display: flex;
+            justify-content: space-between;
+            gap: 12px;
+            margin-top: 14px;
+            padding-top: 14px;
+            border-top: 1px solid #e5e7eb;
+            font-size: 20px;
+        }
+
+        #submitButton {
+            width: 100%;
+            min-height: 49px;
+            font-size: 16px;
+            font-weight: 700;
+        }
+
+        #submitButton:disabled {
+            opacity: 0.65;
+            cursor: not-allowed;
+        }
+
+        #message {
+            margin-top: 18px;
+            text-align: center;
+            line-height: 1.6;
+            overflow-wrap: anywhere;
+        }
+
+        @media (max-width: 520px) {
+            .checkout-card {
+                margin: 20px auto;
+                padding: 20px 16px;
+                border-radius: 12px;
+            }
+
+            .checkout-card h1 {
+                font-size: 25px;
+            }
+
+            #orderSummary {
+                padding: 14px;
+            }
+
+            .summary-total {
+                font-size: 18px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<header class="site-header">
+    <div class="logo">Sasta-mall</div>
+
+    <nav>
+        <a href="/">Home</a>
+        <a href="/products.html">Products</a><a href="/help.html">Help</a>
+    </nav>
+
+    <div class="header-actions">
+        <a href="/login.html">Login</a>
+        <a href="/signup.html">Create Account</a>
+        <a href="/cart.html">🛒 Cart</a>
+    </div>
+</header>
+
+<main>
+    <section class="products-section">
+        <div class="checkout-card">
+            <h1>Delivery Details</h1>
+
+            <p class="checkout-intro">
+                Enter your complete delivery information.
+            </p>
+
+            <div id="orderSummary" aria-live="polite">
+                Loading your order summary...
+            </div>
+
+            <form id="checkoutForm" style="display:none;">
+
+                <div class="checkout-field">
+                    <label for="fullName">Full Name</label>
+                    <input
+                        type="text"
+                        id="fullName"
+                        name="fullName"
+                        autocomplete="name"
+                        required
+                    >
+                </div>
+
+                <div class="checkout-field">
+                    <label for="phone">Contact Number</label>
+                    <input
+                        type="tel"
+                        id="phone"
+                        name="phone"
+                        placeholder="03XXXXXXXXX"
+                        autocomplete="tel"
+                        required
+                    >
+                </div>
+
+                <div class="checkout-field">
+                    <label for="province">Province / Territory</label>
+                    <select id="province" name="province" required>
+                        <option value="">Select Province</option>
+                        <option value="Punjab">Punjab</option>
+                        <option value="Sindh">Sindh</option>
+                        <option value="Khyber Pakhtunkhwa">Khyber Pakhtunkhwa (KPK)</option>
+                        <option value="Islamabad Capital">Islamabad</option>
+                    </select>
+                </div>
+
+                <div class="checkout-field">
+                    <label for="city">City</label>
+                    <select id="city" name="city" required disabled>
+                        <option value="">Select City</option>
+                    </select>
+                </div>
+
+                <div class="checkout-field">
+                    <label for="postalCode">Postal Code</label>
+                    <input
+                        type="text"
+                        id="postalCode"
+                        name="postalCode"
+                        inputmode="numeric"
+                        maxlength="5"
+                        pattern="[0-9]{5}"
+                        placeholder="e.g. 60000"
+                        required
+                    >
+                    <small class="field-help">
+                        Enter your area's 5-digit postal code.
+                    </small>
+                </div>
+
+                <div class="checkout-field">
+                    <label for="address">Complete Delivery Address</label>
+                    <textarea
+                        id="address"
+                        name="address"
+                        rows="4"
+                        autocomplete="street-address"
+                        placeholder="House number, street, area, mohalla, etc."
+                        required
+                    ></textarea>
+                </div>
+
+                <div class="checkout-field">
+                    <label for="deliveryInstructions">
+                        Delivery Instructions (Optional)
+                    </label>
+                    <textarea
+                        id="deliveryInstructions"
+                        name="deliveryInstructions"
+                        rows="3"
+                        placeholder="Any special delivery instructions?"
+                    ></textarea>
+                </div>
+
+                <button
+                    type="submit"
+                    id="submitButton"
+                    class="button button-accent"
+                >
+                    Continue to Payment
+                </button>
+            </form>
+
+            <div id="message" role="status" aria-live="polite"></div>
+        </div>
+    </section>
+</main>
+
+<footer>
+    <p>© 2026 Sasta-mall</p>
+</footer>
+
+<script>
+    /* =========================================
+       PAKISTAN CITIES
+    ========================================= */
+
+    const cities = {
+        "Punjab": [
+            "Lahore", "Faisalabad", "Rawalpindi", "Multan",
+            "Gujranwala", "Sialkot", "Bahawalpur", "Sargodha",
+            "Sheikhupura", "Rahim Yar Khan", "Jhang", "Gujrat",
+            "Sahiwal", "Okara", "Kasur", "Dera Ghazi Khan",
+            "Vehari", "Khanewal", "Muzaffargarh", "Layyah",
+            "Mianwali", "Attock", "Jhelum", "Chakwal",
+            "Hafizabad", "Mandi Bahauddin", "Narowal",
+            "Toba Tek Singh", "Bahawalnagar", "Pakpattan",
+            "Lodhran", "Bhakkar", "Khushab", "Nankana Sahib",
+            "Rajanpur"
+        ],
+
+        "Sindh": [
+            "Karachi", "Hyderabad", "Sukkur", "Larkana",
+            "Nawabshah", "Mirpur Khas", "Jacobabad", "Shikarpur",
+            "Khairpur", "Dadu", "Thatta", "Badin", "Tando Adam",
+            "Tando Allahyar", "Matiari", "Umerkot", "Sanghar",
+            "Ghotki", "Kashmore", "Jamshoro"
+        ],
+
+        "Khyber Pakhtunkhwa": [
+            "Peshawar", "Mardan", "Abbottabad", "Mingora",
+            "Kohat", "Dera Ismail Khan", "Bannu", "Nowshera",
+            "Charsadda", "Swabi", "Mansehra", "Haripur",
+            "Karak", "Lakki Marwat", "Tank", "Chitral",
+            "Hangu", "Batkhela", "Dir", "Timergara", "Parachinar"
+        ],
+
+        "Islamabad Capital": [
+            "Islamabad"
+        ]
+    };
+
+    const provinceSelect = document.getElementById("province");
+    const citySelect = document.getElementById("city");
+    const summary = document.getElementById("orderSummary");
+    const form = document.getElementById("checkoutForm");
+    const message = document.getElementById("message");
+    const submitButton = document.getElementById("submitButton");
+
+    let cart = [];
+    let cartStorageKey = null;
+    let checkoutReady = false;
+
+    function escapeHTML(value) {
+        return String(value ?? "").replace(/[&<>"']/g, character => ({
+            "&": "&amp;",
+            "<": "&lt;",
+            ">": "&gt;",
+            '"': "&quot;",
+            "'": "&#39;"
+        })[character]);
+    }
+
+    function formatPrice(value) {
+        const number = Number(value) || 0;
+
+        return number.toLocaleString("en-PK", {
+            maximumFractionDigits: 2
+        });
+    }
+
+    /* =========================================
+       PROVINCE → CITY
+    ========================================= */
+
+    provinceSelect.addEventListener("change", function() {
+        const selectedProvince = this.value;
+
+        citySelect.innerHTML = '<option value="">Select City</option>';
+
+        const provinceCities = cities[selectedProvince];
+
+        if (!provinceCities) {
+            citySelect.disabled = true;
+            return;
+        }
+
+        provinceCities.forEach(function(city) {
+            const option = document.createElement("option");
+            option.value = city;
+            option.textContent = city;
+            citySelect.appendChild(option);
+        });
+
+        citySelect.disabled = false;
+    });
+
+    /* =========================================
+       LOAD LOGGED-IN USER'S CART
+    ========================================= */
+
+    async function loadCheckoutCart() {
+        form.style.display = "none";
+        summary.textContent = "Loading your order summary...";
+
+        try {
+            const response = await fetch("/api/auth/me", {
+                credentials: "same-origin"
+            });
+
+            if (!response.ok) {
+                throw new Error("Could not verify your login.");
+            }
+
+            const result = await response.json();
+
+            if (!result.loggedIn || !result.user || result.user.id == null) {
+                summary.innerHTML = `
+                    <h3>You need to log in first.</h3>
+                    <p>Please log in to continue with your order.</p>
+                    <a href="/login.html?redirect=${encodeURIComponent(
+                        window.location.pathname + window.location.search
+                    )}" class="button button-accent">
+                        Login to Continue
+                    </a>
+                `;
+                return;
+            }
+
+            // Match the cart key used by product.html.
+            cartStorageKey = "cart_user_" + result.user.id;
+
+            try {
+                cart = JSON.parse(
+                    localStorage.getItem(cartStorageKey) || "[]"
+                );
+            } catch (error) {
+                cart = [];
+            }
+
+            if (!Array.isArray(cart)) {
+                cart = [];
+            }
+
+            cart = cart.filter(item =>
+                item &&
+                item.id != null &&
+                Number(item.quantity) > 0 &&
+                Number.isFinite(Number(item.price))
+            );
+
+            if (cart.length === 0) {
+                summary.innerHTML = `
+                    <h3>Your cart is empty.</h3>
+                    <p>Add a product before proceeding to checkout.</p>
+                    <a href="/products.html" class="button button-accent">
+                        Continue Shopping
+                    </a>
+                `;
+                return;
+            }
+
+            let total = 0;
+
+            const itemsHTML = cart.map(function(item) {
+                const name = escapeHTML(item.name || "Product");
+                const quantity = Number(item.quantity) || 0;
+                const price = Number(item.price) || 0;
+                const lineTotal = price * quantity;
+
+                total += lineTotal;
+
+                return `
+                    <div class="summary-row">
+                        <span>${name} × ${quantity}</span>
+                        <strong>Rs. ${formatPrice(lineTotal)}</strong>
+                    </div>
+                `;
+            }).join("");
+
+            summary.innerHTML = `
+                <h3 style="margin:0 0 12px;">Order Summary</h3>
+                ${itemsHTML}
+                <div class="summary-total">
+                    <strong>Total</strong>
+                    <strong>Rs. ${formatPrice(total)}</strong>
+                </div>
+            `;
+
+            checkoutReady = true;
+            form.style.display = "block";
+
+        } catch (error) {
+            console.error("Checkout cart loading error:", error);
+
+            summary.textContent =
+                "Could not load your cart. Please refresh the page and try again.";
+        }
+    }
+
+    /* =========================================
+       SUBMIT ORDER
+    ========================================= */
+
+    form.addEventListener("submit", async function(event) {
+        event.preventDefault();
+
+        if (!checkoutReady || !cart.length || !cartStorageKey) {
+            message.style.color = "#dc2626";
+            message.textContent =
+                "Your cart is not ready. Please refresh the page.";
+            return;
+        }
+
+        const fullName = document.getElementById("fullName").value.trim();
+        const phone = document.getElementById("phone").value.trim();
+        const province = provinceSelect.value;
+        const city = citySelect.value;
+        const postalCode = document.getElementById("postalCode").value.trim();
+        const address = document.getElementById("address").value.trim();
+        const deliveryInstructions =
+            document.getElementById("deliveryInstructions").value.trim();
+
+        if (!fullName || !phone || !province || !city ||
+            !postalCode || !address) {
+            message.style.color = "#dc2626";
+            message.textContent = "Please fill all required fields.";
+            return;
+        }
+
+        if (!/^\d{5}$/.test(postalCode)) {
+            message.style.color = "#dc2626";
+            message.textContent =
+                "Postal code must be exactly 5 digits.";
+            return;
+        }
+
+        submitButton.disabled = true;
+        submitButton.textContent = "Creating Order...";
+        message.style.color = "#6b7280";
+        message.textContent = "Please wait...";
+
+        try {
+            const response = await fetch("/api/orders", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                credentials: "same-origin",
+                body: JSON.stringify({
+                    fullName,
+                    phone,
+                    province,
+                    city,
+                    postalCode,
+                    address,
+                    deliveryInstructions,
+                    cart
+                })
+            });
+
+            const result = await response.json();
+
+            if (!response.ok) {
+                throw new Error(
+                    result.error || "Could not create order."
+                );
+            }
+
+            if (!result.orderId) {
+                throw new Error(
+                    "The server did not return an order ID. Please check your orders before retrying."
+                );
+            }
+
+            message.style.color = "#16a34a";
+            message.textContent = "Order created successfully!";
+
+            // Clear only this user's cart, after order creation succeeds.
+            localStorage.removeItem(cartStorageKey);
+
+            setTimeout(function() {
+                window.location.href =
+                    "/payment.html?orderId=" +
+                    encodeURIComponent(result.orderId);
+            }, 500);
+
+        } catch (error) {
+            console.error("Checkout submit error:", error);
+
+            message.style.color = "#dc2626";
+            message.textContent =
+                error.message || "Something went wrong. Please try again.";
+
+            submitButton.disabled = false;
+            submitButton.textContent = "Continue to Payment";
+        }
+    });
+
+    loadCheckoutCart();
+</script>
+
+<script src="/js/auth-ui.js"></script>
+
+</body>
+</html>

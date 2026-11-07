@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Sasta-mall</title>
+
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+
+<body>
+
+    <header class="site-header">
+
+        <div class="logo">
+            Sasta-mall
+        </div>
+
+        <nav>
+            <a href="/">Home</a>
+            <a href="/products.html">Products</a>
+        </nav>
+
+        <div class="header-actions">
+            <a href="/login.html">Login</a>
+            <a href="/signup.html">Create Account</a>
+            <a href="/cart.html">🛒 Cart</a>
+        </div>
+
+    </header>
+
+
+    <main>
+
+        <section class="hero">
+
+            <h1>Welcome to Sasta-mall</h1>
+
+            <p>
+                Find useful products at affordable prices.
+            </p>
+
+            <a href="/products.html" class="button">
+                Shop Now
+            </a>
+
+        </section>
+
+
+        <section class="home-products-section">
+            <div class="home-products-heading"><h2>Popular finds</h2><a href="/products.html">Browse all products →</a></div>
+            <div id="homeProducts" class="product-grid"><div class="state-card">Loading products…</div></div>
+        </section>
+
+        <section class="categories-section">
+
+            <h2>Shop by Category</h2>
+
+            <div id="categories">
+                Loading categories...
+            </div>
+
+        </section>
+
+    </main>
+
+
+    <footer>
+
+        <p>© 2026 Sasta-mall</p>
+
+    </footer>
+
+
+    <script>
+        fetch("/api/products")
+            .then(response => response.json())
+            .then(products => {
+                const container = document.getElementById("homeProducts");
+                const grouped = new Map();
+                (Array.isArray(products) ? products : []).forEach(product => {
+                    const key = String(product.category_id ?? "other");
+                    if (!grouped.has(key)) grouped.set(key, []);
+                    grouped.get(key).push(product);
+                });
+                const mixed = [];
+                [...grouped.values()].forEach(items => {
+                    items.sort(() => Math.random() - 0.5).slice(0, 2).forEach(item => mixed.push(item));
+                });
+                mixed.sort(() => Math.random() - 0.5);
+                if (!mixed.length) { container.innerHTML = "<p>No products available yet.</p>"; return; }
+                container.innerHTML = mixed.map(product => `
+                    <article class="product-card product-card-clickable" data-product-id="${product.id}" data-product-url="/product.html?id=${product.id}" tabindex="0" role="link" aria-label="View ${String(product.name || "").replace(/"/g, "&quot;")}">
+                      <div class="product-card-media">${product.image ? `<img src="${product.image}" alt="${String(product.name || "").replace(/"/g, "&quot;")}" loading="lazy">` : `<div class="product-placeholder">Image coming soon</div>`}</div>
+                      <div class="product-card-content"><h3>${product.name || ""}</h3><p>${product.description || ""}</p><strong class="product-card-price">Rs. ${Number(product.price || 0).toLocaleString("en-PK")}</strong></div>
+                    </article>`).join("");
+            }).catch(error => {
+                console.error(error);
+                document.getElementById("homeProducts").innerHTML = "<p>Could not load products.</p>";
+            });
+
+        document.addEventListener("click", event => {
+            const card = event.target.closest(".product-card-clickable");
+            if (card && !event.target.closest("a, button, input, select, textarea")) location.href = card.dataset.productUrl;
+        });
+        document.addEventListener("keydown", event => {
+            const card = event.target.closest(".product-card-clickable");
+            if (card && (event.key === "Enter" || event.key === " ")) { event.preventDefault(); location.href = card.dataset.productUrl; }
+        });
+
+        fetch("/api/categories")
+            .then(response => response.json())
+            .then(categories => {
+
+                const container =
+                    document.getElementById("categories");
+
+                if (categories.length === 0) {
+
+                    container.innerHTML =
+                        "<p>No categories available.</p>";
+
+                    return;
+                }
+
+                container.innerHTML = categories.map(category => `
+                    <a
+                        href="/products.html?category=${category.id}"
+                        class="category-card"
+                    >
+                        <h3>${category.name}</h3>
+                        <p>${category.description || ""}</p>
+                    </a>
+                `).join("");
+
+            })
+            .catch(error => {
+
+                console.error(error);
+
+                document.getElementById("categories").innerHTML =
+                    "<p>Could not load categories.</p>";
+
+            });
+    </script>
+
+
+    <script>
+    (() => {
+      const videoCache = new Map();
+      async function playCardVideo(card) {
+        if (!card || card.dataset.videoLoading === "true") return;
+        card.dataset.videoLoading = "true";
+        try {
+          const id = card.dataset.productId;
+          if (!id) return;
+          let videoPath = videoCache.get(String(id));
+          if (videoPath === undefined) {
+            const response = await fetch(`/api/products/${encodeURIComponent(id)}`);
+            if (!response.ok) return;
+            const detail = await response.json();
+            const item = (Array.isArray(detail.media) ? detail.media : []).find(m => String(m.media_type).toLowerCase() === "video" && m.file_path);
+            videoPath = item ? item.file_path : null;
+            videoCache.set(String(id), videoPath);
+          }
+          const media = card.querySelector(".product-card-media");
+          if (!videoPath || !media || !media.matches(":hover") || media.querySelector("video")) return;
+          const video = document.createElement("video");
+          video.className = "product-hover-video"; video.src = videoPath; video.muted = true; video.loop = true; video.autoplay = true; video.playsInline = true; video.preload = "metadata";
+          media.appendChild(video); video.play().catch(() => {});
+        } catch (error) { console.debug("Home product video unavailable", error); }
+        finally { card.dataset.videoLoading = "false"; }
+      }
+      document.addEventListener("mouseover", event => {
+        const media = event.target.closest(".product-card-media");
+        const card = media?.closest(".product-card-clickable");
+        if (media && card && !media.contains(event.relatedTarget)) playCardVideo(card);
+      });
+      document.addEventListener("mouseout", event => {
+        const media = event.target.closest(".product-card-media");
+        if (!media || media.contains(event.relatedTarget)) return;
+        const video = media.querySelector(".product-hover-video");
+        if (video) { video.pause(); video.remove(); }
+      });
+    })();
+    </script>
+
+    <script src="/js/auth-ui.js"></script>
+
+</body>
+</html>

@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Shop Products - Sasta-mall</title><link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+<header class="site-header">
+  <a class="logo" href="/">Sasta-mall</a>
+  <nav aria-label="Main navigation"><a href="/">Home</a><a href="/products.html">Products</a><a href="/help.html">Help</a></nav>
+  <div class="header-actions"><a href="/login.html">Login</a><a href="/signup.html">Create Account</a><a href="/cart.html">🛒 Cart</a></div>
+</header>
+<main>
+  <section class="products-section product-shop-section">
+    <div class="shop-controls">
+      <div class="category-dropdown-wrap">
+        <button type="button" id="categoryDropdownButton" class="shop-control-button" aria-expanded="false">Categories <span>▾</span></button>
+        <div id="categoryDropdown" class="category-dropdown" hidden></div>
+      </div>
+      <label class="shop-search"><span>⌕</span><input id="productSearch" type="search" placeholder="Search products…" aria-label="Search products"></label>
+      <div class="price-filter price-filter-wrap" id="priceFilterWrap">
+        <button type="button" class="price-filter-toggle" id="priceFilterButton" aria-expanded="false" aria-controls="priceFilterDropdown"><span class="price-filter-icon" aria-hidden="true">☷</span> Price <span aria-hidden="true">▾</span></button>
+        <div class="price-filter-dropdown" id="priceFilterDropdown" hidden>
+          <button type="button" class="price-any-option active" id="anyPriceButton">✓ Any price</button>
+          <div class="price-range-fields">
+            <label class="sr-only" for="minPrice">Minimum price</label><input id="minPrice" type="number" min="0" step="1" placeholder="Min" aria-label="Minimum price">
+            <span>–</span>
+            <label class="sr-only" for="maxPrice">Maximum price</label><input id="maxPrice" type="number" min="0" step="1" placeholder="Max" aria-label="Maximum price">
+          </div>
+        </div>
+      </div>
+    </div>
+    <p id="shopResultCount" class="shop-result-count"></p>
+    <div id="products" class="product-grid"><div class="state-card">Loading products…</div></div>
+  </section>
+</main>
+<footer><p>© 2026 Sasta-mall</p></footer>
+<script>
+(() => {
+  const params = new URLSearchParams(location.search);
+  const selectedCategory = params.get("category");
+  const container = document.getElementById("products");
+  const dropdown = document.getElementById("categoryDropdown");
+  const dropdownButton = document.getElementById("categoryDropdownButton");
+  const search = document.getElementById("productSearch");
+  const priceWrap = document.getElementById("priceFilterWrap");
+  const priceButton = document.getElementById("priceFilterButton");
+  const priceDropdown = document.getElementById("priceFilterDropdown");
+  const anyPriceButton = document.getElementById("anyPriceButton");
+  const minPrice = document.getElementById("minPrice");
+  const maxPrice = document.getElementById("maxPrice");
+  let products = [], categories = [];
+  const videoCache = new Map();
+  const esc = value => String(value ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+  const money = value => Number(value || 0).toLocaleString("en-PK");
+  function card(p) {
+    const img = p.image ? `<img src="${esc(p.image)}" alt="${esc(p.name)}" loading="lazy">` : `<div class="product-placeholder">Image coming soon</div>`;
+    return `<article class="product-card product-card-clickable" data-product-id="${esc(p.id)}" data-product-url="/product.html?id=${encodeURIComponent(p.id)}" tabindex="0" role="link" aria-label="View ${esc(p.name)}">
+      <div class="product-card-media">${img}</div><div class="product-card-content"><h3>${esc(p.name)}</h3><p>${esc(p.description || "")}</p><strong class="product-card-price">Rs. ${money(p.price)}</strong></div></article>`;
+  }
+  function render() {
+    const q = search.value.trim().toLowerCase();
+    const min = minPrice.value !== "" ? Number(minPrice.value) : null;
+    const max = maxPrice.value !== "" ? Number(maxPrice.value) : null;
+    const visible = products.filter(p => (!q || `${p.name||""} ${p.description||""}`.toLowerCase().includes(q)) && (min === null || Number(p.price) >= min) && (max === null || Number(p.price) <= max));
+    document.getElementById("shopResultCount").textContent = `${visible.length} product${visible.length === 1 ? "" : "s"}`;
+    container.innerHTML = visible.length ? visible.map(card).join("") : `<div class="state-card">No products match these filters.</div>`;
+  }
+  function renderCategories() {
+    const activeName = categories.find(c => String(c.id) === String(selectedCategory) || String(c.name).toLowerCase() === String(selectedCategory||"").toLowerCase())?.name;
+    dropdown.innerHTML = `<a href="/products.html" class="${!selectedCategory ? "active" : ""}">All products</a>` + categories.map(c => `<a href="/products.html?category=${encodeURIComponent(c.id)}" class="${String(c.id) === String(selectedCategory) || String(c.name).toLowerCase() === String(selectedCategory||"").toLowerCase() ? "active" : ""}">${esc(c.name)}</a>`).join("");
+    dropdownButton.innerHTML = `${esc(activeName || "Categories")} <span>▾</span>`;
+  }
+  dropdownButton.addEventListener("click", () => {
+    const open = dropdown.hidden; dropdown.hidden = !open; dropdownButton.setAttribute("aria-expanded", String(open));
+  });
+  document.addEventListener("click", e => {
+    if (!e.target.closest(".category-dropdown-wrap")) { dropdown.hidden = true; dropdownButton.setAttribute("aria-expanded", "false"); }
+    if (!e.target.closest(".price-filter-wrap")) { priceDropdown.hidden = true; priceButton.setAttribute("aria-expanded", "false"); }
+    const cardEl = e.target.closest(".product-card-clickable");
+    if (cardEl && !e.target.closest("a,button,input,select,textarea")) location.href = cardEl.dataset.productUrl;
+  });
+  async function enableVideoHover(cardEl) {
+    if (!cardEl || cardEl.dataset.videoLoading === "true") return;
+    cardEl.dataset.videoLoading = "true";
+    const id = cardEl.dataset.productId;
+    try {
+      let videoPath = videoCache.get(String(id));
+      if (videoPath === undefined) {
+        const response = await fetch(`/api/products/${encodeURIComponent(id)}`);
+        if (!response.ok) throw new Error("Product media unavailable");
+        const detail = await response.json();
+        const video = (Array.isArray(detail.media) ? detail.media : []).find(m => String(m.media_type).toLowerCase() === "video" && m.file_path);
+        videoPath = video ? video.file_path : null;
+        videoCache.set(String(id), videoPath);
+      }
+      const media = cardEl.querySelector(".product-card-media");
+      if (!videoPath || !media || !media.matches(":hover") || media.querySelector("video")) return;
+      const video = document.createElement("video");
+      video.className = "product-hover-video";
+      video.src = videoPath; video.muted = true; video.loop = true; video.autoplay = true; video.playsInline = true; video.preload = "metadata";
+      media.appendChild(video);
+      video.play().catch(() => {});
+    } catch (error) { console.debug("Product hover video not available", error); }
+    finally { cardEl.dataset.videoLoading = "false"; }
+  }
+  document.addEventListener("mouseover", e => {
+    const media = e.target.closest(".product-card-media");
+    const cardEl = media?.closest(".product-card-clickable");
+    if (media && cardEl && !media.contains(e.relatedTarget)) enableVideoHover(cardEl);
+  });
+  document.addEventListener("mouseout", e => {
+    const media = e.target.closest(".product-card-media");
+    if (!media || media.contains(e.relatedTarget)) return;
+    const cardEl = media.closest(".product-card-clickable");
+    if (!cardEl) return;
+    const video = media.querySelector(".product-hover-video");
+    if (video) { video.pause(); video.remove(); }
+  });
+  document.addEventListener("keydown", e => {
+    const cardEl = e.target.closest(".product-card-clickable");
+    if (cardEl && (e.key === "Enter" || e.key === " ")) { e.preventDefault(); location.href = cardEl.dataset.productUrl; }
+  });
+  priceButton.addEventListener("click", () => {
+    const open = priceDropdown.hidden;
+    priceDropdown.hidden = !open;
+    priceButton.setAttribute("aria-expanded", String(open));
+  });
+  anyPriceButton.addEventListener("click", () => {
+    minPrice.value = ""; maxPrice.value = "";
+    anyPriceButton.classList.add("active"); anyPriceButton.textContent = "✓ Any price";
+    render();
+  });
+  function updatePriceState() {
+    const hasRange = minPrice.value !== "" || maxPrice.value !== "";
+    anyPriceButton.classList.toggle("active", !hasRange);
+    anyPriceButton.textContent = hasRange ? "Any price" : "✓ Any price";
+    render();
+  }
+  search.addEventListener("input", render); minPrice.addEventListener("input", updatePriceState); maxPrice.addEventListener("input", updatePriceState);
+  Promise.all([fetch("/api/products").then(r=>r.json()), fetch("/api/categories").then(r=>r.json())])
+    .then(([p,c]) => {
+      products = Array.isArray(p) ? p : []; categories = Array.isArray(c) ? c : [];
+      if (selectedCategory) {
+        const match = categories.find(cat => String(cat.id) === selectedCategory || String(cat.name).toLowerCase() === selectedCategory.toLowerCase());
+        if (match) products = products.filter(prod => String(prod.category_id) === String(match.id));
+        else products = products.filter(prod => String(prod.category_id) === selectedCategory);
+      }
+      renderCategories(); render();
+    }).catch(err => { console.error(err); container.innerHTML = `<div class="state-card">Could not load products. Please refresh.</div>`; });
+})();
+</script>
+<script src="/js/auth-ui.js"></script>
+</body></html>

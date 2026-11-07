@@ -1,0 +1,660 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Product - Sasta-mall</title>
+    <link rel="stylesheet" href="/css/style.css">
+
+    <style>
+        /* ==============================
+           PRODUCT PAGE MAIN LAYOUT
+        ============================== */
+
+        main:has(.product-detail-section) {
+            width: 100%;
+            max-width: none;
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        .product-detail-section {
+            width: 100%;
+            max-width: 1800px;
+            margin: 35px auto;
+            padding: 0 24px;
+            box-sizing: border-box;
+        }
+
+        /* Gallery on the left, product details on the right */
+        #product {
+            display: block;
+            width: 100%;
+            max-width: none;
+            min-width: 0;
+            margin: 0;
+            padding: 0;
+            background: transparent;
+            box-shadow: none;
+            border-radius: 0;
+            box-sizing: border-box;
+        }
+
+        .product-layout {
+            display: grid;
+            grid-template-columns: minmax(0, 1.8fr) minmax(320px, 0.9fr);
+            gap: clamp(16px, 1.8vw, 28px);
+            align-items: start;
+            width: 100%;
+            min-width: 0;
+            box-sizing: border-box;
+        }
+
+        /* ==============================
+           PRODUCT IMAGE / VIDEO GALLERY
+        ============================== */
+
+        .product-gallery {
+            display: grid;
+            grid-template-columns: 76px minmax(0, 1fr);
+            gap: 20px;
+            width: 100%;
+            min-width: 0;
+            align-items: start;
+            box-sizing: border-box;
+        }
+
+        .product-thumbnails {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            min-width: 0;
+        }
+
+        .product-thumb {
+            position: relative;
+            flex-shrink: 0;
+            width: 76px;
+            height: 82px;
+            padding: 0;
+            overflow: hidden;
+            border: 2px solid #e5e5e5;
+            border-radius: 9px;
+            background: #f7f7f7;
+            cursor: pointer;
+            box-sizing: border-box;
+            transition: border-color 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .product-thumb:hover,
+        .product-thumb.active {
+            border-color: #e65b25;
+        }
+
+        .product-thumb.active {
+            box-shadow: 0 0 0 1px #e65b25;
+        }
+
+        .product-thumb img,
+        .product-thumb video {
+            display: block;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .video-thumb-icon {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: rgba(0, 0, 0, 0.22);
+            color: white;
+            font-size: 26px;
+            text-shadow: 0 1px 4px #333;
+            pointer-events: none;
+        }
+
+        .main-product-viewer {
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+            min-width: 0;
+            height: clamp(420px, 45vw, 720px);
+            overflow: hidden;
+            border-radius: 12px;
+            background: #f7f7f7;
+            box-sizing: border-box;
+        }
+
+        .main-product-viewer img {
+            display: block;
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+
+        .main-product-viewer video {
+            display: block;
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            background: #111;
+        }
+
+        .no-product-media {
+            padding: 30px;
+            color: #777;
+            text-align: center;
+        }
+
+        /* ==============================
+           PRODUCT DETAILS
+        ============================== */
+
+        .product-info {
+            width: 100%;
+            min-width: 0;
+            margin: 0;
+            padding: 4px 0;
+            box-sizing: border-box;
+        }
+
+        .product-info h1 {
+            margin: 0 0 16px;
+            color: #222;
+            font-size: clamp(26px, 2.2vw, 34px);
+            font-weight: 750;
+            line-height: 1.35;
+            overflow-wrap: anywhere;
+        }
+
+        .product-info .product-price {
+            display: block;
+            margin: 0 0 18px;
+            color: #e65b25;
+            font-size: clamp(27px, 2.2vw, 33px);
+            font-weight: 800;
+            line-height: 1.3;
+            letter-spacing: -0.5px;
+            overflow-wrap: anywhere;
+        }
+
+        .product-description {
+            margin: 0 0 20px;
+            color: #555;
+            font-size: 15.5px;
+            line-height: 1.8;
+            white-space: pre-line;
+            overflow-wrap: anywhere;
+        }
+
+        .product-stock {
+            margin: 0 0 20px;
+            color: #444;
+            font-size: 14px;
+            line-height: 1.7;
+        }
+
+        .stock-available {
+            color: #16803c;
+            font-weight: 700;
+        }
+
+        .stock-unavailable {
+            color: #c62828;
+            font-weight: 700;
+        }
+
+        /* ==============================
+           ADD TO CART BUTTON
+        ============================== */
+
+        .add-to-cart-btn {
+            display: block;
+            width: 100%;
+            max-width: 360px;
+            min-height: 50px;
+            margin: 4px 0 0;
+            padding: 12px 18px;
+            border-radius: 9px;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            box-sizing: border-box;
+            transition: opacity 0.2s ease, transform 0.2s ease;
+        }
+
+        .add-to-cart-btn:hover:not(:disabled) {
+            transform: translateY(-1px);
+        }
+
+        .add-to-cart-btn:disabled {
+            opacity: 0.55;
+            cursor: not-allowed;
+        }
+
+        .product-loading,
+        .product-error {
+            padding: 50px 15px;
+            text-align: center;
+        }
+
+        /* ==============================
+           TABLET AND MOBILE
+        ============================== */
+
+        @media (max-width: 760px) {
+            .product-detail-section {
+                margin: 20px auto;
+                padding: 0 14px;
+            }
+
+            .product-layout {
+                grid-template-columns: minmax(0, 1fr);
+                gap: 24px;
+            }
+
+            .product-gallery {
+                grid-template-columns: 58px minmax(0, 1fr);
+                gap: 10px;
+            }
+
+            .product-thumbnails {
+                gap: 9px;
+            }
+
+            .product-thumb {
+                width: 58px;
+                height: 64px;
+                border-radius: 7px;
+            }
+
+            .main-product-viewer {
+                height: clamp(270px, 78vw, 480px);
+                border-radius: 9px;
+            }
+
+            .product-info {
+                width: 100%;
+                margin: 0;
+                padding: 0 2px;
+            }
+
+            .product-info h1 {
+                margin-bottom: 12px;
+                font-size: 26px;
+            }
+
+            .product-info .product-price {
+                margin-bottom: 16px;
+                font-size: 27px;
+            }
+
+            .product-description {
+                margin-bottom: 18px;
+                font-size: 15px;
+                line-height: 1.75;
+            }
+
+            .product-stock {
+                margin-bottom: 18px;
+            }
+
+            .add-to-cart-btn {
+                max-width: none;
+            }
+        }
+
+        @media (max-width: 380px) {
+            .product-gallery {
+                grid-template-columns: 48px minmax(0, 1fr);
+                gap: 8px;
+            }
+
+            .product-thumb {
+                width: 48px;
+                height: 55px;
+            }
+
+            .main-product-viewer {
+                height: 270px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<header class="site-header">
+    <div class="logo">Sasta-mall</div>
+
+    <nav>
+        <a href="/">Home</a>
+        <a href="/products.html">Products</a><a href="/help.html">Help</a>
+    </nav>
+
+    <div class="header-actions">
+        <a href="/login.html">Login</a>
+        <a href="/signup.html">Create Account</a>
+        <a href="/cart.html">🛒 Cart</a>
+    </div>
+</header>
+
+<main>
+    <section class="product-detail-section">
+        <div id="product" class="product-loading">
+            Loading product...
+        </div>
+    </section>
+</main>
+
+<footer>
+    <p>© 2026 Sasta-mall</p>
+</footer>
+
+<script>
+    const params = new URLSearchParams(window.location.search);
+    const productId = params.get("id");
+    const container = document.getElementById("product");
+
+    let currentProduct = null;
+    let currentMedia = [];
+
+    // Safely display product information in HTML.
+    function escapeHTML(value) {
+        return String(value ?? "").replace(/[&<>"']/g, character => ({
+            "&": "&amp;",
+            "<": "&lt;",
+            ">": "&gt;",
+            '"': "&quot;",
+            "'": "&#39;"
+        })[character]);
+    }
+
+    function formatPrice(value) {
+        const number = Number(value);
+        return Number.isFinite(number)
+            ? number.toLocaleString("en-PK", {
+                maximumFractionDigits: 2
+            })
+            : "0";
+    }
+
+    async function updateCartCount() {
+        const cartLink = document.querySelector(
+            '.header-actions a[href="/cart.html"]'
+        );
+
+        if (!cartLink) return;
+
+        try {
+            const response = await fetch("/api/auth/me", {
+                credentials: "same-origin"
+            });
+            const result = await response.json();
+
+            if (result.loggedIn && result.user && result.user.id != null) {
+                const cartKey = "cart_user_" + result.user.id;
+                const cart = JSON.parse(
+                    localStorage.getItem(cartKey) || "[]"
+                );
+
+                const totalItems = cart.reduce(
+                    (total, item) => total + (Number(item.quantity) || 0),
+                    0
+                );
+
+                cartLink.textContent = `🛒 Cart (${cart.length})`;
+            } else {
+                cartLink.textContent = "🛒 Cart (0)";
+            }
+        } catch (error) {
+            console.error("Could not update cart count:", error);
+        }
+    }
+
+    function renderProduct(product) {
+        currentProduct = product;
+
+        // Always put the video first, then product images.
+        currentMedia = Array.isArray(product.media)
+            ? [...product.media].sort((a, b) => {
+                if (a.media_type === "video" && b.media_type !== "video") {
+                    return -1;
+                }
+                if (a.media_type !== "video" && b.media_type === "video") {
+                    return 1;
+                }
+                return (Number(a.sort_order) || 0) -
+                       (Number(b.sort_order) || 0);
+            })
+            : [];
+
+        const thumbnails = currentMedia.map((media, index) => {
+            const source = escapeHTML(media.file_path);
+            const isVideo = media.media_type === "video";
+
+            return `
+                <button
+                    type="button"
+                    class="product-thumb ${index === 0 ? "active" : ""}"
+                    data-media-index="${index}"
+                    aria-label="${isVideo ? "View product video" : "View product image " + (index + 1)}"
+                    aria-pressed="${index === 0 ? "true" : "false"}"
+                    title="${isVideo ? "Product video" : "Product image"}"
+                >
+                    ${
+                        isVideo
+                            ? `<video src="${source}" muted playsinline preload="metadata" tabindex="-1"></video>
+                               <span class="video-thumb-icon" aria-hidden="true">▶</span>`
+                            : `<img src="${source}" alt="Product thumbnail ${index + 1}" loading="lazy">`
+                    }
+                </button>
+            `;
+        }).join("");
+
+        const galleryHTML = currentMedia.length
+            ? `
+                <div class="product-gallery">
+                    <div class="product-thumbnails" aria-label="Product media thumbnails">
+                        ${thumbnails}
+                    </div>
+                    <div
+                        id="mainProductViewer"
+                        class="main-product-viewer"
+                        aria-label="Main product media"
+                    ></div>
+                </div>
+            `
+            : `
+                <div class="main-product-viewer">
+                    <div class="no-product-media">No product images or video available.</div>
+                </div>
+            `;
+
+        const stock = Number(product.stock) || 0;
+        const stockHTML = stock > 0
+            ? `<span class="stock-available">In stock (${stock})</span>`
+            : `<span class="stock-unavailable">Out of stock</span>`;
+
+        container.innerHTML = `
+            <div class="product-layout">
+                ${galleryHTML}
+
+                <div class="product-info">
+                    <h1>${escapeHTML(product.name)}</h1>
+
+                    <p class="product-price">
+                        Rs. ${formatPrice(product.price)}
+                    </p>
+
+                    <p class="product-description">${
+                        escapeHTML(product.description || "No description available.")
+                    }</p>
+
+                    <p class="product-stock">Stock: ${stockHTML}</p>
+
+                    <button
+                        type="button"
+                        id="addToCartButton"
+                        class="button button-accent add-to-cart-btn"
+                        ${stock <= 0 ? "disabled" : ""}
+                    >
+                        ${stock <= 0 ? "Out of Stock" : "Add to Cart"}
+                    </button>
+                </div>
+            </div>
+        `;
+
+        if (currentMedia.length) {
+            showMedia(0);
+        }
+
+        const addButton = document.getElementById("addToCartButton");
+        if (addButton && stock > 0) {
+            addButton.addEventListener("click", () => addToCart(product));
+        }
+
+        // Hover on desktop changes the main media; click also works on mobile.
+        container.querySelectorAll(".product-thumb").forEach(thumbnail => {
+            const index = Number(thumbnail.dataset.mediaIndex);
+
+            thumbnail.addEventListener("mouseenter", () => {
+                if (window.matchMedia("(hover: hover) and (pointer: fine)").matches) {
+                    showMedia(index);
+                }
+            });
+
+            thumbnail.addEventListener("focus", () => showMedia(index));
+            thumbnail.addEventListener("click", () => showMedia(index));
+        });
+    }
+
+    function showMedia(index) {
+        const media = currentMedia[index];
+        const viewer = document.getElementById("mainProductViewer");
+
+        if (!media || !viewer) return;
+
+        viewer.replaceChildren();
+
+        container.querySelectorAll(".product-thumb").forEach((thumbnail, i) => {
+            const active = i === index;
+            thumbnail.classList.toggle("active", active);
+            thumbnail.setAttribute("aria-pressed", String(active));
+        });
+
+        if (media.media_type === "video") {
+            const video = document.createElement("video");
+            video.src = media.file_path;
+            video.controls = true;
+            video.autoplay = true;
+            video.loop = true;
+            video.muted = true;
+            video.playsInline = true;
+            video.preload = "auto";
+            video.setAttribute("aria-label", "Product video");
+
+            viewer.appendChild(video);
+
+            // Browsers usually require autoplay videos to begin muted.
+            video.play().catch(error => {
+                console.info("Video autoplay was blocked by the browser.", error);
+            });
+        } else {
+            const image = document.createElement("img");
+            image.src = media.file_path;
+            image.alt = currentProduct?.name || "Product image";
+            image.draggable = false;
+            viewer.appendChild(image);
+        }
+    }
+
+    async function addToCart(product) {
+        try {
+            const response = await fetch("/api/auth/me", {
+                credentials: "same-origin"
+            });
+
+            const result = await response.json();
+
+            // Guests must log in before adding products to the cart.
+            if (!result.loggedIn || !result.user) {
+                const currentUrl =
+                    window.location.pathname + window.location.search;
+
+                window.location.href = "/login.html?redirect=" +
+                    encodeURIComponent(currentUrl);
+                return;
+            }
+
+            const userId = result.user.id;
+            const cartKey = "cart_user_" + userId;
+
+            let cart = JSON.parse(localStorage.getItem(cartKey) || "[]");
+
+            const existingItem = cart.find(
+                item => item.id === product.id
+            );
+
+            if (existingItem) {
+                existingItem.quantity += 1;
+            } else {
+                cart.push({
+                    id: product.id,
+                    name: product.name,
+                    price: Number(product.price),
+                    image: product.image || (Array.isArray(product.media) ? (product.media.find(m => String(m.media_type).toLowerCase() === "image" && m.file_path)?.file_path || "") : ""),
+                    quantity: 1
+                });
+            }
+
+            localStorage.setItem(cartKey, JSON.stringify(cart));
+
+            await updateCartCount();
+            alert("Product added to cart!");
+
+        } catch (error) {
+            console.error("Add to cart error:", error);
+            alert("Something went wrong. Please try again.");
+        }
+    }
+
+    async function loadProduct() {
+        if (!productId) {
+            container.innerHTML =
+                '<p class="product-error">Product not found.</p>';
+            return;
+        }
+
+        try {
+            const response = await fetch(
+                "/api/products/" + encodeURIComponent(productId)
+            );
+
+            if (!response.ok) {
+                throw new Error("Product not found");
+            }
+
+            const product = await response.json();
+            renderProduct(product);
+
+        } catch (error) {
+            console.error("Product loading error:", error);
+            container.innerHTML =
+                '<p class="product-error">Product not found. Please try again later.</p>';
+        }
+    }
+
+    loadProduct();
+    updateCartCount();
+</script>
+
+<script src="/js/auth-ui.js"></script>
+</body>
+</html>

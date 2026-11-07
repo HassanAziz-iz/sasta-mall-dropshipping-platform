@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cart - Sasta-mall</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+
+<body>
+
+<header class="site-header">
+    <div class="logo">Sasta-mall</div>
+
+    <nav>
+        <a href="/">Home</a>
+        <a href="/products.html">Products</a><a href="/help.html">Help</a>
+    </nav>
+
+    <div class="header-actions">
+        <a href="/login.html">Login</a>
+        <a href="/signup.html">Create Account</a>
+        <a href="/cart.html">🛒 Cart</a>
+    </div>
+</header>
+
+<main>
+    <section class="products-section">
+
+        <h1>Your Cart</h1>
+
+        <div id="cart">
+            Loading cart...
+        </div>
+
+    </section>
+</main>
+
+<footer>
+    <p>© 2026 Sasta-mall</p>
+</footer>
+
+<script>
+    window.currentUserId = null;
+
+
+    async function checkLoginAndLoadCart() {
+
+        const container =
+            document.getElementById("cart");
+
+        try {
+
+            const response =
+                await fetch("/api/auth/me", {
+                    credentials: "same-origin"
+                });
+
+            const result =
+                await response.json();
+
+
+            // Guest user
+            if (!result.loggedIn) {
+
+                container.innerHTML = `
+                    <div style="
+                        text-align:center;
+                        padding:60px 20px;
+                    ">
+
+                        <h2>Please login first</h2>
+
+                        <p style="
+                            color:#6b7280;
+                            margin-bottom:25px;
+                        ">
+                            You need an account to use the cart.
+                        </p>
+
+                        <a
+                            href="/login.html?redirect=/cart.html"
+                            class="button button-accent"
+                        >
+                            Login
+                        </a>
+
+                        <a
+                            href="/signup.html?redirect=/cart.html"
+                            class="button"
+                        >
+                            Create Account
+                        </a>
+
+                    </div>
+                `;
+
+                return;
+            }
+
+
+            // Logged-in user's ID
+            window.currentUserId =
+                result.user.id;
+
+
+            loadCart();
+            updateCartCount();
+
+        } catch (error) {
+
+            console.error(
+                "Cart auth error:",
+                error
+            );
+
+            container.innerHTML = `
+                <p>
+                    Unable to load cart.
+                    Please refresh the page.
+                </p>
+            `;
+        }
+    }
+
+
+    function getCartKey() {
+
+        return "cart_user_" +
+            window.currentUserId;
+    }
+
+
+    function loadCart() {
+
+        const cart =
+            JSON.parse(
+                localStorage.getItem(
+                    getCartKey()
+                ) || "[]"
+            );
+
+
+        const container =
+            document.getElementById("cart");
+
+
+        if (cart.length === 0) {
+
+            container.innerHTML = `
+                <div style="
+                    text-align:center;
+                    padding:60px 20px;
+                ">
+
+                    <h2>Your cart is empty</h2>
+
+                    <p style="
+                        color:#6b7280;
+                        margin-bottom:25px;
+                    ">
+                        Add some products to your cart.
+                    </p>
+
+                    <a
+                        href="/products.html"
+                        class="button"
+                    >
+                        Continue Shopping
+                    </a>
+
+                </div>
+            `;
+
+            return;
+        }
+
+
+        let total = 0;
+
+
+        cart.forEach(item => {
+
+            total +=
+                Number(item.price) *
+                Number(item.quantity);
+
+        });
+
+
+        container.innerHTML = `
+
+            <div style="
+                background:white;
+                border:1px solid #e5e7eb;
+                border-radius:16px;
+                padding:25px;
+                box-shadow:0 8px 30px rgba(0,0,0,0.06);
+            ">
+
+
+                ${cart.map(item => `
+
+                    <div style="
+                        display:flex;
+                        justify-content:space-between;
+                        align-items:center;
+                        gap:20px;
+                        padding:20px 0;
+                        border-bottom:1px solid #e5e7eb;
+                    ">
+
+
+                        <div>
+
+                            <h3 style="
+                                margin:0 0 8px;
+                            ">
+                                ${item.name}
+                            </h3>
+
+
+                            <p style="
+                                margin:0;
+                                color:#6b7280;
+                            ">
+                                Rs. ${item.price}
+                            </p>
+
+                        </div>
+
+
+                        <div style="
+                            display:flex;
+                            align-items:center;
+                            gap:12px;
+                        ">
+
+
+                            <button
+                                class="button"
+                                onclick="changeQuantity(${item.id}, -1)"
+                            >
+                                -
+                            </button>
+
+
+                            <strong>
+                                ${item.quantity}
+                            </strong>
+
+
+                            <button
+                                class="button"
+                                onclick="changeQuantity(${item.id}, 1)"
+                            >
+                                +
+                            </button>
+
+
+                            <button
+                                class="button"
+                                onclick="removeItem(${item.id})"
+                                style="background:#dc2626;"
+                            >
+                                Remove
+                            </button>
+
+
+                        </div>
+
+                    </div>
+
+                `).join("")}
+
+
+                <div style="
+                    display:flex;
+                    justify-content:space-between;
+                    align-items:center;
+                    padding-top:25px;
+                ">
+
+
+                    <h2>
+                        Total: Rs. ${total}
+                    </h2>
+
+
+                    <div style="
+                        display:flex;
+                        gap:12px;
+                        flex-wrap:wrap;
+                    ">
+
+
+                        <a
+                            href="/products.html"
+                            class="button"
+                        >
+                            Continue Shopping
+                        </a>
+
+
+                        <a
+                            href="/checkout.html"
+                            class="button button-accent"
+                        >
+                            Checkout
+                        </a>
+
+
+                    </div>
+
+                </div>
+
+            </div>
+        `;
+    }
+
+
+    function updateCartCount() {
+
+        if (!window.currentUserId) {
+            return;
+        }
+
+
+        const cart =
+            JSON.parse(
+                localStorage.getItem(
+                    getCartKey()
+                ) || "[]"
+            );
+
+
+        // Count different products only
+        // Quantity is NOT counted here
+        const totalProducts =
+            cart.length;
+
+
+        const cartLink =
+            document.querySelector(
+                '.header-actions a[href="/cart.html"]'
+            );
+
+
+        if (cartLink) {
+
+            cartLink.textContent =
+                totalProducts > 0
+                    ? `🛒 Cart (${totalProducts})`
+                    : "🛒 Cart";
+
+        }
+    }
+
+
+    function changeQuantity(
+        productId,
+        change
+    ) {
+
+        if (!window.currentUserId) {
+            return;
+        }
+
+
+        let cart =
+            JSON.parse(
+                localStorage.getItem(
+                    getCartKey()
+                ) || "[]"
+            );
+
+
+        const item =
+            cart.find(
+                item => item.id === productId
+            );
+
+
+        if (!item) {
+            return;
+        }
+
+
+        item.quantity += change;
+
+
+        if (item.quantity <= 0) {
+
+            cart =
+                cart.filter(
+                    item => item.id !== productId
+                );
+
+        }
+
+
+        localStorage.setItem(
+            getCartKey(),
+            JSON.stringify(cart)
+        );
+
+
+        loadCart();
+        updateCartCount();
+    }
+
+
+    function removeItem(productId) {
+
+        if (!window.currentUserId) {
+            return;
+        }
+
+
+        let cart =
+            JSON.parse(
+                localStorage.getItem(
+                    getCartKey()
+                ) || "[]"
+            );
+
+
+        cart =
+            cart.filter(
+                item => item.id !== productId
+            );
+
+
+        localStorage.setItem(
+            getCartKey(),
+            JSON.stringify(cart)
+        );
+
+
+        loadCart();
+        updateCartCount();
+    }
+
+
+    checkLoginAndLoadCart();
+
+</script>
+
+<script src="/js/auth-ui.js"></script>
+
+</body>
+</html>

@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Customer Dashboard | Sasta-mall</title>
+<link rel="stylesheet" href="/css/style.css">
+<link rel="stylesheet" href="/css/customer-dashboard.css">
+<link rel="stylesheet" href="/css/support-chat.css">
+</head>
+<body class="customer-dashboard">
+<header class="site-header">
+  <a class="logo dashboard-logo" href="/">Sasta-mall</a>
+  <nav><a href="/">Home</a><a href="/products.html">Products</a></nav>
+  <div class="header-actions"><a href="/cart.html">🛒 Cart</a></div>
+</header>
+<div class="customer-shell">
+  <aside class="customer-sidebar">
+    <div class="customer-profile"><div class="profile-avatar" id="profileAvatar">S</div><div><strong id="profileName">My Account</strong><span>Customer account</span></div></div>
+    <div class="side-label">MY ACCOUNT</div>
+    <nav class="customer-nav" aria-label="Customer dashboard">
+      <button class="nav-item active" data-view="dashboard"><span>▦</span> Dashboard</button>
+      <button class="nav-item" data-view="categories"><span>▤</span> Categories</button>
+      <button class="nav-item" data-view="orders"><span>▣</span> Order Status</button>
+      <button class="nav-item" data-view="tracking"><span>⌁</span> Tracking</button>
+      <button class="nav-item" data-view="support"><span>✉</span> Customer Support <span class="support-unread-badge" id="supportUnreadBadge" hidden>Unread</span></button>
+      <button class="nav-item dashboard-logout-button" id="dashboardLogout" type="button"><span>↪</span> Logout</button>
+    </nav>
+    <div class="sidebar-bottom"><a href="/cart.html">View Cart →</a></div>
+  </aside>
+  <main class="customer-main">
+    <div class="dashboard-topline"><div><p class="eyebrow">CUSTOMER PORTAL</p><h1 id="pageTitle">Dashboard</h1><p id="pageSubtitle">Browse products and discover something useful.</p></div><a class="dashboard-cart-button" href="/cart.html">🛒 View Cart</a></div>
+    <section class="dashboard-view active" id="view-dashboard">
+      <div class="welcome-panel"><div><span class="welcome-kicker">WELCOME TO SASTA-MALL</span><h2>Find something you’ll love.</h2><p>Explore our latest products at affordable prices.</p></div><div class="welcome-art" aria-hidden="true">✦</div></div>
+      <div class="section-heading"><div><h2>Explore products</h2><p>Search across all available products.</p></div><span class="result-count" id="allProductCount"></span></div>
+      <div class="dashboard-product-controls"><label class="search-wrap"><span>⌕</span><input id="allProductSearch" type="search" placeholder="Search products by name or description…" aria-label="Search all products"></label><div class="price-filter price-filter-wrap dashboard-price-filter" id="allPriceFilterWrap"><button type="button" class="price-filter-toggle" id="allPriceFilterButton" aria-expanded="false" aria-controls="allPriceFilterDropdown"><span class="price-filter-icon" aria-hidden="true">☷</span> Price <span aria-hidden="true">▾</span></button><div class="price-filter-dropdown" id="allPriceFilterDropdown" hidden><button type="button" class="price-any-option active" id="allAnyPriceButton">✓ Any price</button><div class="price-range-fields"><label class="sr-only" for="allMinPrice">Minimum price</label><input id="allMinPrice" type="number" min="0" step="1" placeholder="Min" aria-label="Minimum price"><span>–</span><label class="sr-only" for="allMaxPrice">Maximum price</label><input id="allMaxPrice" type="number" min="0" step="1" placeholder="Max" aria-label="Maximum price"></div></div></div></div>
+      <div class="product-grid" id="allProducts"><div class="state-card">Loading products…</div></div>
+    </section>
+    <section class="dashboard-view" id="view-categories">
+      <div class="section-heading"><div><h2>Shop by category</h2><p>Choose a category, then search within it.</p></div></div>
+      <div class="category-layout"><aside class="category-list-panel"><div class="search-wrap compact"><span>⌕</span><input id="categorySearch" type="search" placeholder="Find a category…" aria-label="Search categories"></div><div id="categoryList" class="category-list"><div class="muted-state">Loading categories…</div></div></aside>
+      <div class="category-products-panel"><div class="category-products-heading"><h3 id="selectedCategoryTitle">All categories</h3><p id="selectedCategoryDescription" hidden></p></div><div class="dashboard-product-controls category-product-controls"><label class="search-wrap compact"><span>⌕</span><input id="categoryProductSearch" type="search" placeholder="Search in this category…" aria-label="Search products in selected category"></label><div class="price-filter price-filter-wrap dashboard-price-filter" id="categoryPriceFilterWrap"><button type="button" class="price-filter-toggle" id="categoryPriceFilterButton" aria-expanded="false" aria-controls="categoryPriceFilterDropdown"><span class="price-filter-icon" aria-hidden="true">☷</span> Price <span aria-hidden="true">▾</span></button><div class="price-filter-dropdown" id="categoryPriceFilterDropdown" hidden><button type="button" class="price-any-option active" id="categoryAnyPriceButton">✓ Any price</button><div class="price-range-fields"><label class="sr-only" for="categoryMinPrice">Minimum price</label><input id="categoryMinPrice" type="number" min="0" step="1" placeholder="Min" aria-label="Minimum price"><span>–</span><label class="sr-only" for="categoryMaxPrice">Maximum price</label><input id="categoryMaxPrice" type="number" min="0" step="1" placeholder="Max" aria-label="Maximum price"></div></div></div></div><div class="product-grid" id="categoryProducts"><div class="state-card">Select a category to get started.</div></div></div></div>
+    </section>
+    <section class="dashboard-view" id="view-orders">
+      <div class="section-heading orders-section-heading"><div><h2>Your orders</h2><p>Review payment decisions and the progress of each order.</p></div><div class="orders-heading-actions"><button class="primary-button order-details-heading-button" id="openCustomerOrderDetails" type="button">▤ Order Details</button><button class="subtle-button" id="refreshOrders" type="button">↻ Refresh</button></div></div>
+      <div id="orderStatusList"><div class="state-card">Loading your orders…</div></div>
+      <section class="customer-order-details-panel" id="customerOrderDetailsPanel" aria-live="polite">
+        <div class="customer-details-intro"><div><span class="details-eyebrow">YOUR PURCHASES</span><h3>Order Details</h3><p>Select an order to view its products and saved delivery address.</p></div></div>
+        <div class="customer-order-picker" id="customerOrderPicker"><div class="state-card">Your orders will appear here.</div></div>
+        <div id="customerOrderDetails"><div class="state-card">Choose an order above to see details.</div></div>
+      </section>
+    </section>
+    <section class="dashboard-view" id="view-tracking">
+      <div class="section-heading"><div><h2>Shipment tracking</h2><p>Tracking is shown once an order has shipped and tracking details are available.</p></div><button class="subtle-button" id="refreshTracking">↻ Refresh</button></div>
+      <div id="trackingList"><div class="state-card">Loading tracking…</div></div>
+    </section>
+    <section class="dashboard-view" id="view-support">
+      <div class="support-customer-chat">
+        <div class="support-chat-heading">
+          <div class="support-chat-title-wrap">
+            <div class="support-chat-avatar" aria-hidden="true">💬</div>
+            <div><span class="support-eyebrow">SASTA-MALL CUSTOMER CARE</span><h2>How can we help you?</h2><p>Send us a message and our support team will assist you.</p></div>
+          </div>
+          <span class="support-online-dot">Support inbox</span>
+        </div>
+        <div class="support-chat-prompt">
+          <div class="support-chat-prompt-icon" aria-hidden="true">✉</div>
+          <div><strong>Start your conversation here</strong><p>Type your question in the message box below. You can also attach a screenshot to explain your issue.</p></div>
+        </div>
+        <div class="support-customer-messages" id="supportCustomerMessages" aria-live="polite" aria-label="Your support conversation" tabindex="0">
+          <div class="support-empty">Your conversation will appear here.<br><strong>Write your first message below to contact support.</strong></div>
+        </div>
+        <form class="support-composer" id="supportCustomerForm">
+          <label class="support-attach" for="supportScreenshot" title="Attach a screenshot" aria-label="Attach screenshot">＋</label>
+          <input id="supportScreenshot" type="file" accept="image/png,image/jpeg,image/webp,image/gif" hidden>
+          <div class="support-composer-main">
+            <textarea id="supportMessageInput" maxlength="2000" rows="2" placeholder="Click here and type your message..." aria-label="Type your support message"></textarea>
+            <div class="support-attachment-preview" id="supportAttachmentPreview" hidden></div>
+            <div class="support-composer-hint" id="supportCooldownHint">Describe your issue clearly. Please don't share passwords or card details.</div>
+          </div>
+          <button class="support-send-button" id="supportSendButton" type="submit" disabled><span>Send</span><span aria-hidden="true">➤</span></button>
+        </form>
+        <p class="support-secure-note">🔒 Your conversation is visible to you and authorized support staff.</p>
+      </div>
+    </section>
+    <footer class="dashboard-footer">© 2026 Sasta-mall <span>Customer Dashboard</span></footer>
+  </main>
+</div>
+<script src="/js/auth-ui.js"></script>
+<script src="/js/customer-dashboard.js"></script>
+<script src="/js/support-chat.js"></script>
+</body>
+</html>
