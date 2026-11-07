@@ -1,6 +1,6 @@
 # Sasta Mall
 
-An open-source e-commerce starter project built with **Node.js**, **Express**, **SQLite**, and vanilla HTML, CSS, and JavaScript.
+An open-source dropshipping starter project built with **Node.js**, **Express**, **SQLite**, and vanilla HTML, CSS, and JavaScript.
 
 Sasta Mall includes a customer-facing storefront and an admin panel for managing products, categories, orders, customers, tracking, and customer-support conversations.
 
