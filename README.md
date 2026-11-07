@@ -27,12 +27,12 @@ Explore the Sasta Mall interface:
 )
 
 ### ⚙️ Admin Dashboard
-![Admin Dashboard](<img width="1260" height="586" alt="admin pannel" src="https://github.com/user-attachments/assets/882c7b0d-95df-4b9d-bfc2-77f7de1681e8" />
+![Admin Dashboard](<img src="https://github.com/user-attachments/assets/9dc5db41-2545-4423-a9c9-45537ea32979" alt="Sasta Mall Screenshot" width="100%">
 )
 
 ### 💬 Customer Support Chat
-![Customer Support Chat](<img width="1244" height="573" alt="customer support" src="https://github.com/user-attachments/assets/06d730f5-ac8c-44c0-9525-f94e1f37712d" />
-)
+![Customer Support Chat]<img width="1244" height="573" alt="customer support" src="https://github.com/user-attachments/assets/06d730f5-ac8c-44c0-9525-f94e1f37712d" />
+
 
 ---
 
