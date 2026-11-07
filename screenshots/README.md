@@ -18,7 +18,7 @@ Explore the Sasta Mall interface:
 
 
 ### ⚙️ Admin Dashboard
-<img src="https://github.com/user-attachments/assets/9dc5db41-2545-4423-a9c9-45537ea32979" alt="Sasta Mall Screenshot" width="100%">
+<img width="1260" height="586" alt="Image" src="https://github.com/user-attachments/assets/c11e261a-322d-47ce-b9d0-30a77141480c" />
 
 
 ### 💬 Customer Support Chat
